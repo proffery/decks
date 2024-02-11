@@ -34,7 +34,7 @@ type GetDecksResponseType = {
 }
 
 export const decksAPI = {
-  getDecks() {
+  fetchDecks() {
     return instance.get<GetDecksResponseType>('/v2/decks')
   }
 }
