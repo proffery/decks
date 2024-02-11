@@ -33,8 +33,13 @@ type GetDecksResponseType = {
   maxCardsCount: number
 }
 
+export type DeckRequestType = { name: string }
+
 export const decksAPI = {
   fetchDecks() {
     return instance.get<GetDecksResponseType>('/v2/decks')
+  },
+  addDeck(deckData: DeckRequestType) {
+    return instance.post<DeckType>('/v1/decks', deckData)
   }
 }
