@@ -7,7 +7,7 @@ export const instance = axios.create({
   },
 })
 
-type DeckType = {
+export type DeckType = {
   author: {
     id: string
     name: string

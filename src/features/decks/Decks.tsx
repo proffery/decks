@@ -4,9 +4,6 @@ import { useEffect } from 'react'
 import { decksAPI } from './decks-api.ts'
 
 export const Decks = () => {
-  useEffect(() => {
-    decksAPI.getDecks()
-  },[])
   return (
     <div>
       <h1>Decks 🦝</h1>
