@@ -2,30 +2,44 @@ import { Dispatch } from 'redux'
 import { decksAPI, UpdateDeckParams } from './decks-api.ts'
 import { addDeckAC, deleteDeckAC, setDecksAC, updateDeckAC } from './decks-reducer.ts'
 import { changeAppError, changeAppStatus } from '../../app/app-reducer.ts'
+import { errorHandler } from '../../common/utils/handle-error.ts'
 import { AxiosError } from 'axios'
 
 export const fetchDecksTC = () => async (dispatch: Dispatch) => {
   dispatch(changeAppStatus('loading'))
   try {
-    const decs = await decksAPI.fetchDecks()
-    dispatch(setDecksAC(decs.data.items))
+    const res = await decksAPI.fetchDecks()
+    dispatch(setDecksAC(res.data.items))
     dispatch(changeAppStatus('succeeded'))
   } catch (error) {
     dispatch(changeAppStatus('failed'))
-    dispatch(changeAppError('some Error'))
+    errorHandler(error, dispatch)
   }
 }
 
 export const addDeckTC = (name: string) => async (dispatch: Dispatch) => {
-  return decksAPI.addDeck(name).then((res) => {
+  dispatch(changeAppStatus('loading'))
+  try {
+    const res = await decksAPI.addDeck(name)
     dispatch(addDeckAC(res.data))
-  })
+    dispatch(changeAppStatus('succeeded'))
+  } catch (error) {
+    dispatch(changeAppStatus('failed'))
+    errorHandler(error, dispatch)
+  }
 }
 
+
 export const deleteDeckTC = (id: string) => async (dispatch: Dispatch) => {
-  return decksAPI.deleteDeck(id).then((res) => {
+  dispatch(changeAppStatus('loading'))
+  try {
+    const res = await decksAPI.deleteDeck(id)
     dispatch(deleteDeckAC(res.data.id))
-  })
+    dispatch(changeAppStatus('succeeded'))
+  } catch (error) {
+    dispatch(changeAppStatus('failed'))
+    errorHandler(error, dispatch)
+  }
 }
 
 export const updateDeckTC = (params: UpdateDeckParams) => async (dispatch: Dispatch) => {
@@ -33,16 +47,9 @@ export const updateDeckTC = (params: UpdateDeckParams) => async (dispatch: Dispa
   try {
     const res = await decksAPI.updateDeck(params)
     dispatch(updateDeckAC(res.data))
+    dispatch(changeAppStatus('succeeded'))
   } catch (error) {
     dispatch(changeAppStatus('failed'))
-    dispatch(changeAppError('some Error'))
-    let errorMessage: string = ''
-    if (error instanceof AxiosError) {
-      if (error.response) errorMessage = error.response?.data.errorMessages[0].message
-      else errorMessage = error.message
-    } else {
-      if (error instanceof Error) errorMessage = error.message
-    }
-    console.log(errorMessage);
-  } 
+    errorHandler(error, dispatch)
+  }
 }
