@@ -25,5 +25,5 @@ type ActionsType =
 export const changeAppStatus = (status: RequestStatusType) =>
   ({ type: 'CHANGE-APP-STATUS', status } as const)
 
-export const changeAppError = (error: string) =>
+export const changeAppError = (error: string | null) =>
   ({ type: 'CHANGE-APP-ERROR', error } as const)
