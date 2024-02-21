@@ -7,39 +7,53 @@ export const instance = axios.create({
   },
 })
 
-export type DeckType = {
-  author: {
-    id: string
-    name: string
+export const decksAPI = {
+  fetchDecks() {
+    return instance.get<FetchDecksResponse>(`v2/decks`)
   },
+  addDeck(name: string) {
+    return instance.post<Deck>(`v1/decks`, {
+      name,
+    })
+  },
+  deleteDeck(id: string) {
+    return instance.delete<Deck>(`v1/decks/${id}`)
+  },
+  updateDeck({ id, name }: UpdateDeckParams) {
+    return instance.patch<Deck>(`v1/decks/${id}`, { name })
+  },
+}
+
+export type UpdateDeckParams = {
+  id: string
+  name: string
+}
+
+export type FetchDecksResponse = {
+  items: Deck[]
+  pagination: Pagination
+  maxCardsCount: number
+}
+export type Author = {
+  id: string
+  name: string
+}
+export type Deck = {
+  author: Author
   id: string
   userId: string
   name: string
-  isPrivate: true,
+  isPrivate: boolean
+  shots: number
   cover: string
+  rating: number
   created: string
   updated: string
   cardsCount: number
 }
-
-type GetDecksResponseType = {
-  items: DeckType[],
-  pagination: {
-    currentPage: number
-    itemsPerPage: number
-    totalPages: number
-    totalItems: number
-  },
-  maxCardsCount: number
-}
-
-export type DeckRequestType = { name: string }
-
-export const decksAPI = {
-  fetchDecks() {
-    return instance.get<GetDecksResponseType>('/v2/decks')
-  },
-  addDeck(deckData: DeckRequestType) {
-    return instance.post<DeckType>('/v1/decks', deckData)
-  }
+export type Pagination = {
+  currentPage: number
+  itemsPerPage: number
+  totalPages: number
+  totalItems: number
 }
